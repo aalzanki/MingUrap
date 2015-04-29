@@ -34,7 +34,7 @@
         
         private func processBid(bid : Float, isCounter : Bool) {
             var text = "Bid Accepted"
-            var goldRemainingText = "You earned \(Int(bid * Float(curGold))) gold."
+            var goldRemainingText = "You earned \(2000 - Int(bid * Float(curGold))) gold."
             if (!isCounter && !acceptBid(bid * 100)) {
                 text = "Bid Denied"
                 curGold = curGold * reductionPerRound
