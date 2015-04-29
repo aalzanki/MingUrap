@@ -26,25 +26,29 @@
         func makeOfferTapped() {
             if !gameOver || curGold < 1 {
                 if let slider = offerObjects?.getChildByName("slider", recursively: false) as? CCSlider {
-                    var text = "Bid Accepted"
-                    var goldRemainingText = "You earned \(Int(slider.sliderValue * Float(curGold))) gold."
-                    if (!acceptBid(slider.sliderValue * 100)) {
-                        text = "Bid Denied"
-                        curGold = curGold * reductionPerRound
-                        goldRemainingText = "Gold remaining: " + String(Int(curGold))
-                    } else {
-                        gameOver = true
-                    }
-                    
-                    if let title = getChildByName("title", recursively: false) as? CCLabelTTF {
-                        title.string = text
-                    }
-                    
-                    if let goldRemaining = getChildByName("goldRemaining", recursively: false) as? CCLabelTTF {
-                        goldRemaining.string = goldRemainingText
-                    }
+                    processBid(slider.sliderValue, isCounter: false)
                 }
                 attemptCounterOffer()
+            }
+        }
+        
+        private func processBid(bid : Float, isCounter : Bool) {
+            var text = "Bid Accepted"
+            var goldRemainingText = "You earned \(Int(bid * Float(curGold))) gold."
+            if (!isCounter && !acceptBid(bid * 100)) {
+                text = "Bid Denied"
+                curGold = curGold * reductionPerRound
+                goldRemainingText = "Gold remaining: " + String(Int(curGold))
+            } else {
+                gameOver = true
+            }
+            
+            if let title = getChildByName("title", recursively: false) as? CCLabelTTF {
+                title.string = text
+            }
+            
+            if let goldRemaining = getChildByName("goldRemaining", recursively: false) as? CCLabelTTF {
+                goldRemaining.string = goldRemainingText
             }
         }
         
@@ -65,14 +69,18 @@
         func attemptCounterOffer() {
             if (!gameOver) {
                 if let title = getChildByName("title", recursively: false) as? CCLabelTTF {
-                    title.string = "How about " + counterOfferValue().description + "?"
+                    title.string = "How about " + counterOfferValue().description + "%?"
                 }
                 showCounterOffer()
             }
         }
         
         func rejectedCounterOffer() {
-            curGold -= reductionPerRound
+            if let title = getChildByName("title", recursively: false) as? CCLabelTTF {
+                title.string = "Make a bid"
+            }
+            
+            curGold = curGold * reductionPerRound
             if let goldRemaining = getChildByName("goldRemaining", recursively: false) as? CCLabelTTF {
                 goldRemaining.string = "Gold remaining: " + String(Int(curGold))
             }
@@ -80,7 +88,8 @@
         }
         
         func acceptedCounterOffer() {
-            // I'm not sure what is supposed to happen here
+            // THIS VALUE SHOULD BE CHANGED
+            processBid(0.6, isCounter: false)
             showOffer()
         }
     }
