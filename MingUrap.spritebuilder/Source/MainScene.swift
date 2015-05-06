@@ -7,10 +7,16 @@ class MainScene: CCNode {
     var gameOver = false
     private var offerObjects : CCNode? = nil
     private var counterOfferObjects : CCNode? = nil
+    private var slider : CCSlider? = nil
+    var touchEnabled = true
     
     func didLoadFromCCB() {
         offerObjects = getChildByName("offerObjects", recursively: false)
         counterOfferObjects = getChildByName("counterOfferObjects", recursively: false)
+        slider = offerObjects?.getChildByName("slider", recursively: false) as? CCSlider
+        slider?.sliderValue = 0.5
+        
+        
         showOffer()
     }
     
@@ -97,5 +103,15 @@ class MainScene: CCNode {
         // THIS VALUE SHOULD BE CHANGED
         processBid(0.6, isCounter: false)
         showOffer()
+    }
+    
+    override func update(delta: CCTime) {
+        if let labelPerc1 = getChildByName("labelPerc1", recursively: false) as? CCLabelTTF {
+            labelPerc1.string = Int(ceil(slider!.sliderValue * 100)).description + "%"
+        }
+        
+        if let labelPerc2 = getChildByName("labelPerc2", recursively: false) as? CCLabelTTF {
+            labelPerc2.string = Int(floor((1 - slider!.sliderValue) * 100)).description + "%"
+        }
     }
 }
